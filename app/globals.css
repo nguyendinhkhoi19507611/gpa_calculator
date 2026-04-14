@@ -19,13 +19,27 @@
 /* ============= Base ============= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 14px;
   min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior-y: contain;
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
 /* ============= Auth Layout ============= */
 .auth-layout {
@@ -38,6 +52,14 @@ body {
 .auth-header p { @apply text-gray-500 mt-2 text-sm; }
 .auth-card {
   @apply bg-white rounded-2xl border border-gray-200 shadow-lg p-8;
+  max-width: 420px;
+  margin: 0 auto;
+  width: 100%;
+}
+.auth-page-wrapper {
+  @apply min-h-screen flex items-center justify-center px-4 py-8;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
 }
 .auth-card h2 { @apply text-xl font-bold text-gray-900 mb-6 text-center; }
 .auth-card .form-group { @apply mb-5; }
@@ -52,14 +74,16 @@ body {
 .auth-link a { @apply text-gray-900 font-semibold no-underline hover:underline; }
 
 /* ============= Dashboard Layout ============= */
-.dashboard-layout { @apply min-h-screen flex flex-col; }
+.dashboard-layout { @apply min-h-screen flex flex-col; min-height: 100dvh; }
 .dashboard-body { @apply flex flex-1; padding-top: 60px; }
-.dashboard-main { @apply flex-1; margin-left: 280px; min-height: calc(100vh - 60px); }
+.dashboard-main { @apply flex-1; margin-left: 280px; min-height: calc(100vh - 60px); min-height: calc(100dvh - 60px); }
 
 /* ============= Header ============= */
 .app-header {
   @apply fixed top-0 left-0 right-0 z-50 h-[60px] bg-white border-b border-gray-200 flex items-center justify-between px-6;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  padding-left: max(env(safe-area-inset-left), 1.5rem);
+  padding-right: max(env(safe-area-inset-right), 1.5rem);
 }
 .header-left { @apply flex items-center gap-3; }
 .header-title { @apply text-lg font-bold text-gray-900 flex items-center gap-2; }
@@ -78,6 +102,7 @@ body {
 /* ============= Sidebar ============= */
 .sidebar {
   @apply fixed top-[60px] left-0 bottom-0 w-[280px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-[48];
+  -webkit-overflow-scrolling: touch;
 }
 .sidebar-header { @apply px-5 pt-5 pb-3 flex items-center justify-between; }
 .sidebar-header h2 { @apply text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2; }
@@ -103,18 +128,25 @@ body {
 .sidebar-add-btn { @apply mx-4 mb-4 text-center justify-center; }
 .sidebar-overlay {
   @apply hidden fixed inset-0 z-[45] bg-black/40;
+  backdrop-filter: blur(2px);
 }
 
 /* ============= Modal ============= */
 .modal-overlay {
   @apply fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
 }
 .modal-content {
   @apply bg-white rounded-2xl shadow-2xl w-full max-w-md p-6;
+  animation: slideUp 0.25s ease-out;
 }
 .modal-header { @apply flex items-center justify-between mb-5; }
 .modal-header h3 { @apply text-lg font-bold text-gray-900 flex items-center gap-2; }
 .modal-close { @apply bg-transparent border-none text-xl text-gray-400 cursor-pointer hover:text-gray-700; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ============= Container & Card ============= */
 .container { @apply max-w-4xl mx-auto px-5 py-8; }
@@ -152,6 +184,7 @@ body {
 
 input[type="text"], input[type="number"], input[type="email"], input[type="password"], select {
   @apply h-10 px-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm outline-none transition-all font-[inherit];
+  -webkit-appearance: none;
 }
 input:focus, select:focus {
   @apply border-gray-900 bg-white ring-2 ring-gray-900/10;
@@ -197,6 +230,7 @@ input::placeholder { @apply text-gray-400; }
 /* ============= Buttons ============= */
 .btn {
   @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border-none text-sm font-semibold cursor-pointer transition-all font-[inherit];
+  -webkit-tap-highlight-color: transparent;
 }
 .btn:disabled { @apply opacity-50 cursor-not-allowed; }
 .btn-primary {
@@ -213,6 +247,7 @@ input::placeholder { @apply text-gray-400; }
 .error-msg.show { @apply block; }
 
 /* ============= Table ============= */
+.table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .subjects-table { @apply w-full border-collapse text-sm; }
 .subjects-table th {
   @apply bg-gray-900 text-white px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider;
@@ -267,6 +302,8 @@ input::placeholder { @apply text-gray-400; }
 /* ============= Info Box ============= */
 .info-box {
   @apply bg-gray-50 border-l-3 border-l-gray-300 rounded-r-lg px-4 py-3 mb-4 text-sm text-gray-500 leading-relaxed;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .info-box strong { @apply text-gray-700; }
 
@@ -293,24 +330,197 @@ input::placeholder { @apply text-gray-400; }
 
 .semester-gpa { @apply grid-cols-4; }
 
+/* ============= Year Actions ============= */
+.year-actions {
+  @apply mt-8 flex gap-3 justify-center items-center flex-wrap;
+}
+.year-actions .btn { @apply px-4 py-2 text-sm rounded-lg; }
+
+/* ============= Mobile Subject Cards (replaces table on ≤640px) ============= */
+.subject-card-list { display: none; }
+.subject-card {
+  @apply p-4 border-b border-gray-100;
+}
+.subject-card:last-child { @apply border-b-0; }
+.subject-card-header {
+  @apply flex justify-between items-start mb-2;
+}
+.subject-card-name {
+  @apply text-sm font-bold text-gray-900 flex-1 mr-2;
+}
+.subject-card-actions {
+  @apply flex gap-1 flex-shrink-0;
+}
+.subject-card-grades {
+  @apply grid grid-cols-4 gap-2 mt-2;
+}
+.subject-card-grade {
+  @apply text-center bg-gray-50 rounded-lg py-2 px-1;
+}
+.subject-card-grade .label {
+  @apply block text-[9px] uppercase tracking-wider text-gray-400 mb-0.5;
+}
+.subject-card-grade .value {
+  @apply text-sm font-bold text-gray-900;
+}
+.subject-card-type {
+  @apply mt-2 flex items-center gap-2;
+}
+
 /* ============= Responsive ============= */
+
+/* -- Tablet & below (768px) -- */
 @media (max-width: 768px) {
+  /* Sidebar */
   .sidebar { @apply -translate-x-full transition-transform duration-300; }
   .sidebar.open { @apply translate-x-0; }
   .sidebar-overlay.show { @apply block; }
   .sidebar-close { @apply block; }
   .dashboard-main { @apply ml-0; }
   .hamburger-btn { @apply flex; }
+
+  /* Header */
+  .app-header { 
+    @apply px-3 gap-2;
+    padding-left: max(env(safe-area-inset-left), 0.75rem);
+    padding-right: max(env(safe-area-inset-right), 0.75rem);
+  }
+  .header-left { @apply gap-2; }
+  .header-right { @apply gap-2; }
   .user-name { @apply hidden; }
+  .header-logout { font-size: 11px; padding: 4px 10px; }
+  .header-title { font-size: 15px; gap: 6px; }
+
+  /* Container */
+  .container { @apply px-3 py-5; }
+
+  /* Cards */
+  .card { @apply rounded-xl mb-4; }
+  .card-header { @apply px-4 py-3; }
+  .card-header .icon { @apply w-7 h-7 rounded-lg text-sm; }
+  .card-body { @apply p-4; }
+
+  /* Forms */
   .form-grid { @apply grid-cols-1; }
   .form-grid.three { @apply grid-cols-2; }
-  .gpa-summary { @apply grid-cols-1 gap-3; }
+
+  /* GPA Summary */
+  .gpa-summary { @apply grid-cols-1 gap-3 p-5 rounded-xl; }
   .semester-gpa { @apply grid-cols-2; }
   .gpa-item:not(:last-child)::after { @apply hidden; }
+  .gpa-value { @apply text-2xl; }
+  .gpa-value.large { @apply text-3xl; }
+
+  /* Semesters overview */
   .semesters-overview { @apply grid-cols-1; }
+
+  /* Table */
+  .subjects-table th,
+  .subjects-table td { @apply px-2 py-2 text-xs; }
+  .subjects-table th:first-child,
+  .subjects-table td:first-child { min-width: 100px; }
+
+  /* Auth pages */
+  .auth-card { @apply p-6 rounded-xl mx-3; }
+  .auth-card h2 { @apply text-lg mb-4; }
+
+  /* Modal */
+  .modal-overlay { @apply p-3; }
+  .modal-content { @apply p-5 rounded-xl; max-height: 90vh; max-height: 90dvh; overflow-y: auto; }
+  .modal-header h3 { @apply text-base; }
+
+  /* Buttons */
+  .btn { min-height: 40px; @apply text-sm; }
+  .btn-row { @apply flex-wrap gap-2 justify-center; }
+  .year-actions { @apply gap-2 mt-6; }
+
+  /* Info box (formula) */
+  .info-box { @apply text-xs px-3 py-2; }
+
+  /* Tabs: horizontal scroll */
+  .tabs { @apply flex-nowrap overflow-x-auto pb-1 gap-1.5; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { @apply whitespace-nowrap text-xs px-3 py-1.5 flex-shrink-0; }
+
+  /* Grade inputs */
+  .grade-input-wrap input { @apply w-[60px]; }
+
+  /* Semester cards */
+  .semester-overview-card { @apply p-4 rounded-xl; }
+  .semester-overview-grade .grade-value { @apply text-lg; }
+
+  /* Empty state */
+  .empty-state { @apply py-8; }
 }
 
+/* -- Small phone (640px): Subject table → cards -- */
+@media (max-width: 640px) {
+  .table-scroll-wrapper { display: none; }
+  .subject-card-list { display: block; }
+}
+
+/* -- Small phone (480px) -- */
 @media (max-width: 480px) {
   .form-grid.three { @apply grid-cols-1; }
   .semester-gpa { @apply grid-cols-1; }
+
+  /* GPA Summary */
+  .gpa-summary { @apply p-4 gap-2; }
+  .gpa-value { @apply text-xl; }
+  .gpa-value.large { @apply text-2xl; }
+  .gpa-label { font-size: 10px; }
+
+  /* Header */
+  .header-title { font-size: 13px; }
+
+  /* Badges */
+  .badge { @apply px-2 py-0 text-[10px]; }
+
+  /* Modal: near full screen */
+  .modal-overlay { @apply p-0; }
+  .modal-content { @apply rounded-t-2xl rounded-b-none max-w-full; min-height: 50vh; min-height: 50dvh; margin-top: auto; }
+
+  /* Practice */
+  .practice-section { @apply p-3; }
+
+  /* Auth */
+  .auth-card { @apply p-4 rounded-lg shadow-md mx-2; }
+
+  /* Year actions: stack vertically on tiny screens */
+  .year-actions { @apply flex-col gap-2; }
+  .year-actions .btn { @apply w-full justify-center; }
+}
+
+/* -- Extra small (360px) -- */
+@media (max-width: 360px) {
+  body { font-size: 13px; }
+  .app-header { @apply h-[50px] px-2; }
+  .dashboard-body { padding-top: 50px; }
+  .sidebar { @apply top-[50px]; }
+  .container { @apply px-2 py-3; }
+  .grade-input-wrap input { @apply w-[50px]; }
+  .btn { @apply px-3 py-2 text-xs; min-height: 36px; }
+  .gpa-summary { @apply p-3; }
+  .card-header { @apply px-3 py-2; }
+  .card-body { @apply p-3; }
+}
+
+/* -- Touch devices: 44px minimum tap targets (Apple HIG) -- */
+@media (pointer: coarse) {
+  .sidebar-item { min-height: 44px; @apply py-3; }
+  .tab-btn { min-height: 40px; @apply py-2; }
+  input[type="text"], input[type="number"], input[type="email"], input[type="password"], select {
+    min-height: 44px; @apply text-base;
+  }
+  .btn { min-height: 44px; }
+  .add-grade-btn, .remove-grade-btn { @apply w-10 h-10; }
+  .practice-toggle { min-height: 48px; }
+}
+
+/* -- Landscape phone -- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .gpa-summary { @apply grid-cols-3 gap-2 p-4; }
+  .gpa-item:not(:last-child)::after { display: block; }
+  .semester-gpa { @apply grid-cols-4; }
+  .modal-content { max-height: 95vh; max-height: 95dvh; }
 }

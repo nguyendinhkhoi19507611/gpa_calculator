@@ -24,7 +24,11 @@ export default function LoginPage() {
   };
 
   return (
+    <div className="auth-page-wrapper">
     <div className="auth-card">
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+        <img src="/logo.png" alt="GPA Calculator Logo" width="64" height="64" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
+      </div>
       <h2>Đăng Nhập</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group"><label>Email</label><input type="email" placeholder="email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
@@ -35,6 +39,7 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="auth-link">Chưa có tài khoản? <Link href="/register">Đăng ký ngay</Link></p>
+    </div>
     </div>
   );
 }

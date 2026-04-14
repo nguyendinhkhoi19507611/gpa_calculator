@@ -28,7 +28,11 @@ export default function RegisterPage() {
   };
 
   return (
+    <div className="auth-page-wrapper">
     <div className="auth-card">
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+        <img src="/logo.png" alt="GPA Calculator Logo" width="64" height="64" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
+      </div>
       <h2>Đăng Ký</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group"><label>Họ và tên</label><input type="text" placeholder="Nguyễn Văn A" value={name} onChange={(e) => setName(e.target.value)} required />
@@ -43,6 +47,7 @@ export default function RegisterPage() {
         </button>
       </form>
       <p className="auth-link">Đã có tài khoản? <Link href="/login">Đăng nhập</Link></p>
+    </div>
     </div>
   );
 }

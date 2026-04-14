@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import SchoolIcon from '@mui/icons-material/School';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -25,8 +24,8 @@ export default function Header({ userName, onToggleSidebar }: HeaderProps) {
         <button className="hamburger-btn" onClick={onToggleSidebar} aria-label="Toggle sidebar">
           <MenuIcon sx={{ fontSize: 24, color: '#374151' }} />
         </button>
-        <h1 className="header-title">
-          <SchoolIcon sx={{ fontSize: 24 }} />
+        <h1 className="header-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src="/logo.png" alt="GPA Calculator Logo" width="28" height="28" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
           GPA Calculator
         </h1>
       </div>

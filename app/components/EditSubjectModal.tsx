@@ -90,8 +90,9 @@ export default function EditSubjectModal({ isOpen, onClose, subject, onUpdate, a
     if (credits > availableCredits) { setM1Error(`Nhập quá tín chỉ! Tối đa môn này chỉ được: ${availableCredits} TC`); return; }
     setM1Error(''); setSaving(true);
     
+    const rounded10 = +round2(grade10);
     const data = {
-      name, credits, grade10: +round2(grade10), grade4: to4Scale(grade10), letter: getLetterGrade(grade10), type: 'Nhập trực tiếp', formula: `Nhập trực tiếp: ${round2(grade10)}/10`,
+      name, credits, grade10: rounded10, grade4: to4Scale(rounded10), letter: getLetterGrade(rounded10), type: 'Nhập trực tiếp', formula: `Nhập trực tiếp: ${round2(grade10)}/10`,
       rawInputs: { mode: 'mode1', name, credits, grade10 }
     };
     onUpdate(subject._id, data);
@@ -121,8 +122,9 @@ export default function EditSubjectModal({ isOpen, onClose, subject, onUpdate, a
     if (credits > availableCredits) { setM2Error(`Vượt quá tín chỉ dự kiến! Chỉ có thể là: ${availableCredits} TC`); return; }
     
     grade10 = Math.min(10, Math.max(0, grade10)); setM2Error(''); setSaving(true);
+    const rounded10 = +round2(grade10);
     const data = {
-      name, credits, grade10: +round2(grade10), grade4: to4Scale(grade10), letter: getLetterGrade(grade10), type, formula,
+      name, credits, grade10: rounded10, grade4: to4Scale(rounded10), letter: getLetterGrade(rounded10), type, formula,
       rawInputs: { 
         mode: 'mode2', name, theoryCredits: parseFloat(m2TheoryCredits), regularCoeff: rc, midtermCoeff: mc, finalCoeff: fc,
         hasPractice: m2HasPractice, practiceCredits: parseFloat(m2PracticeCredits),

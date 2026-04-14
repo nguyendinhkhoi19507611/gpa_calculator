@@ -16,11 +16,19 @@ async function verifySession(cookie: string | undefined) {
   }
 }
 
-export async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow API routes and static files through
-  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.startsWith('/favicon')) {
+  // Allow API routes, static files, and common assets through
+  if (pathname.startsWith('/api') || 
+      pathname.startsWith('/_next') || 
+      pathname.startsWith('/favicon') ||
+      pathname.endsWith('.png') ||
+      pathname.endsWith('.jpg') ||
+      pathname.endsWith('.jpeg') ||
+      pathname.endsWith('.svg') ||
+      pathname.endsWith('.ico')
+  ) {
     return NextResponse.next();
   }
 
@@ -40,6 +48,3 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
-};

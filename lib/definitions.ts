@@ -23,7 +23,7 @@ export const SemesterSchema = z.object({
 
 export const SubjectSchema = z.object({
   name: z.string().min(1, 'Tên môn học không được để trống').trim(),
-  credits: z.number().min(0.5, 'Số tín chỉ phải > 0').max(30),
+  credits: z.number().min(1, 'Số tín chỉ phải >= 1').max(30),
   grade10: z.number().min(0).max(10),
   grade4: z.number().min(0).max(4),
   letter: z.string(),

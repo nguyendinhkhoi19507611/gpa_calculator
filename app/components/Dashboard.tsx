@@ -321,13 +321,13 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                <button className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '14px', borderRadius: '8px' }} onClick={() => { setPreselectedYearId(year._id); setShowAddSemesterModal(true); }}>
-                  <AddIcon sx={{ fontSize: 18, marginRight: 1 }} /> Thêm học kỳ mới
+              <div className="year-actions">
+                <button className="btn btn-primary" onClick={() => { setPreselectedYearId(year._id); setShowAddSemesterModal(true); }}>
+                  <AddIcon sx={{ fontSize: 18 }} /> Thêm học kỳ mới
                 </button>
-                {years.length > 0 && years[years.length - 1]._id === year._id && (
-                  <button className="btn btn-danger" style={{ padding: '8px 16px', fontSize: '14px', borderRadius: '8px' }} onClick={() => confirmDeleteYear(year._id)}>
-                    <DeleteOutlineIcon sx={{ fontSize: 18, marginRight: 1 }} /> Xóa toàn bộ năm học này
+                {years.length > 0 && (
+                  <button className="btn btn-danger" onClick={() => confirmDeleteYear(year._id)}>
+                    <DeleteOutlineIcon sx={{ fontSize: 18 }} /> Xóa toàn bộ năm học này
                   </button>
                 )}
               </div>
@@ -409,31 +409,54 @@ export default function Dashboard() {
           <div className="card">
             <div className="card-header"><h2>Tổng Quan Từng Năm</h2></div>
             <div className="card-body" style={{ padding: 0 }}>
-              <table className="subjects-table" style={{ width: '100%' }}>
-                <thead>
-                  <tr>
-                    <th>Năm học</th>
-                    <th style={{ textAlign: 'center' }}>Số Kỳ</th>
-                    <th style={{ textAlign: 'center' }}>Tổng Tín Chỉ</th>
-                    <th style={{ textAlign: 'center' }}>GPA (10)</th>
-                    <th style={{ textAlign: 'center' }}>GPA (4)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {years.map(y => {
-                    const g = calculateGpaFromSemesters(y.semesters);
-                    return (
-                      <tr key={y._id} onClick={() => setActiveView({ type: 'year', id: y._id })} style={{ cursor: 'pointer' }}>
-                        <td><strong className="text-gray-900">{y.name}</strong></td>
-                        <td style={{ textAlign: 'center' }}>{y.semesters.length}</td>
-                        <td style={{ textAlign: 'center' }}>{g.totalC}</td>
-                        <td style={{ textAlign: 'center' }}><strong>{g.g10}</strong></td>
-                        <td style={{ textAlign: 'center' }}><strong>{g.g4}</strong></td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+              {/* Desktop: Table */}
+              <div className="table-scroll-wrapper">
+                <table className="subjects-table" style={{ width: '100%' }}>
+                  <thead>
+                    <tr>
+                      <th>Năm học</th>
+                      <th style={{ textAlign: 'center' }}>Số Kỳ</th>
+                      <th style={{ textAlign: 'center' }}>Tổng TC</th>
+                      <th style={{ textAlign: 'center' }}>GPA (10)</th>
+                      <th style={{ textAlign: 'center' }}>GPA (4)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {years.map(y => {
+                      const g = calculateGpaFromSemesters(y.semesters);
+                      return (
+                        <tr key={y._id} onClick={() => setActiveView({ type: 'year', id: y._id })} style={{ cursor: 'pointer' }}>
+                          <td><strong className="text-gray-900">{y.name}</strong></td>
+                          <td style={{ textAlign: 'center' }}>{y.semesters.length}</td>
+                          <td style={{ textAlign: 'center' }}>{g.totalC}</td>
+                          <td style={{ textAlign: 'center' }}><strong>{g.g10}</strong></td>
+                          <td style={{ textAlign: 'center' }}><strong>{g.g4}</strong></td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile: Year Cards */}
+              <div className="subject-card-list">
+                {years.map(y => {
+                  const g = calculateGpaFromSemesters(y.semesters);
+                  return (
+                    <div key={y._id} className="subject-card" onClick={() => setActiveView({ type: 'year', id: y._id })} style={{ cursor: 'pointer' }}>
+                      <div className="subject-card-header">
+                        <span className="subject-card-name">{y.name}</span>
+                        <span className="badge badge-type">{y.semesters.length} kỳ</span>
+                      </div>
+                      <div className="subject-card-grades" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+                        <div className="subject-card-grade"><span className="label">Tín chỉ</span><span className="value">{g.totalC}</span></div>
+                        <div className="subject-card-grade"><span className="label">GPA (10)</span><span className="value">{g.g10}</span></div>
+                        <div className="subject-card-grade"><span className="label">GPA (4)</span><span className="value">{g.g4}</span></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

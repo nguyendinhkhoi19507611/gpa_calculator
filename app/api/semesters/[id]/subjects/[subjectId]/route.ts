@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Subject from '@/lib/models/Subject';
+import Semester from '@/lib/models/Semester';
 import { getSession } from '@/lib/session';
+import { SubjectSchema } from '@/lib/definitions';
 
 export async function DELETE(
   _request: NextRequest,
@@ -30,8 +32,7 @@ export async function DELETE(
   }
 }
 
-import Semester from '@/lib/models/Semester';
-import { SubjectSchema } from '@/lib/definitions';
+
 
 export async function PUT(
   request: NextRequest,

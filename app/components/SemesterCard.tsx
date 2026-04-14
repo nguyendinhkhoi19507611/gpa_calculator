@@ -117,8 +117,9 @@ export default function SemesterCard({ semesterId, semesterName, targetCredits, 
     if (!name || isNaN(credits) || credits <= 0 || isNaN(grade10) || grade10 < 0 || grade10 > 10) { setM1Error('Vui lòng điền thông tin hợp lệ!'); return; }
     if (gpa.currentCredits + credits > targetCredits) { setM1Error(`Nhập quá số tín chỉ tổng! Tối đa thêm được: ${targetCredits - gpa.currentCredits} TC`); return; }
     setM1Error('');
+    const rounded10 = +round2(grade10);
     saveSubject({ 
-      name, credits, grade10: +round2(grade10), grade4: to4Scale(grade10), letter: getLetterGrade(grade10), type: 'Nhập trực tiếp', formula: `Nhập trực tiếp: ${round2(grade10)}/10`,
+      name, credits, grade10: rounded10, grade4: to4Scale(rounded10), letter: getLetterGrade(rounded10), type: 'Nhập trực tiếp', formula: `Nhập trực tiếp: ${round2(grade10)}/10`,
       rawInputs: { mode: 'mode1', name, credits, grade10 }
     });
     setM1Name(''); setM1Credits(''); setM1Grade10('');
@@ -145,8 +146,9 @@ export default function SemesterCard({ semesterId, semesterName, targetCredits, 
     }
     if (gpa.currentCredits + credits > targetCredits) { setM2Error(`Vượt tín chỉ dự kiến! Chỉ còn thiếu: ${targetCredits - gpa.currentCredits} TC`); return; }
     grade10 = Math.min(10, Math.max(0, grade10)); setM2Error('');
+    const rounded10 = +round2(grade10);
     saveSubject({ 
-      name, credits, grade10: +round2(grade10), grade4: to4Scale(grade10), letter: getLetterGrade(grade10), type, formula,
+      name, credits, grade10: rounded10, grade4: to4Scale(rounded10), letter: getLetterGrade(rounded10), type, formula,
       rawInputs: { 
         mode: 'mode2', name, theoryCredits: parseFloat(m2TheoryCredits), regularCoeff: rc, midtermCoeff: mc, finalCoeff: fc,
         hasPractice: m2HasPractice, practiceCredits: parseFloat(m2PracticeCredits),
@@ -353,35 +355,65 @@ export default function SemesterCard({ semesterId, semesterName, targetCredits, 
               <p>Chưa có môn học. Thêm môn ở phía trên!</p>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table className="subjects-table">
-                <thead><tr>
-                  <th style={{ minWidth: 160 }}>Tên môn</th><th style={{ textAlign: 'center' }}>TC</th>
-                  <th style={{ textAlign: 'center' }}>Điểm /10</th><th style={{ textAlign: 'center' }}>Điểm /4</th>
-                  <th style={{ textAlign: 'center' }}>Chữ</th><th style={{ textAlign: 'center' }}>Loại</th>
-                  <th style={{ textAlign: 'center', width: 90 }}>Tác vụ</th>
-                </tr></thead>
-                <tbody>
-                  {subjects.map((s) => {
-                    const isFail = s.grade10 < 4.0;
-                    return (
-                      <tr key={s._id} className="subject-row">
-                        <td><strong className="text-gray-900">{s.name}</strong></td>
-                        <td style={{ textAlign: 'center' }}>{s.credits}</td>
-                        <td style={{ textAlign: 'center' }}><span className={`badge ${isFail ? 'badge-fail' : 'badge-grade-10'}`}>{round2(s.grade10)}</span></td>
-                        <td style={{ textAlign: 'center' }}><strong>{s.grade4}</strong></td>
-                        <td style={{ textAlign: 'center' }}><span className={`badge badge-letter-${s.letter.charAt(0)}`}>{s.letter}</span></td>
-                        <td style={{ textAlign: 'center' }}><span className="badge badge-type">{s.type}</span></td>
-                        <td style={{ textAlign: 'center', padding: '12px 6px' }}>
-                          <button className="btn btn-secondary" style={{ padding: '4px 8px', marginRight: 4 }} title="Sửa/Xem" onClick={() => setEditingSubject(s)}><EditIcon sx={{ fontSize: 16 }} /></button>
-                          <button className="btn btn-danger" style={{ padding: '4px 8px' }} title="Xoá" onClick={() => setSubjectToDelete(s._id)}><DeleteOutlineIcon sx={{ fontSize: 16 }} /></button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <>
+              {/* Desktop: Table */}
+              <div className="table-scroll-wrapper">
+                <table className="subjects-table">
+                  <thead><tr>
+                    <th style={{ minWidth: 140 }}>Tên môn</th><th style={{ textAlign: 'center' }}>TC</th>
+                    <th style={{ textAlign: 'center' }}>Điểm /10</th><th style={{ textAlign: 'center' }}>Điểm /4</th>
+                    <th style={{ textAlign: 'center' }}>Chữ</th><th style={{ textAlign: 'center' }}>Loại</th>
+                    <th style={{ textAlign: 'center', width: 90 }}>Tác vụ</th>
+                  </tr></thead>
+                  <tbody>
+                    {subjects.map((s) => {
+                      const isFail = s.grade10 < 4.0;
+                      return (
+                        <tr key={s._id} className="subject-row">
+                          <td><strong className="text-gray-900">{s.name}</strong></td>
+                          <td style={{ textAlign: 'center' }}>{s.credits}</td>
+                          <td style={{ textAlign: 'center' }}><span className={`badge ${isFail ? 'badge-fail' : 'badge-grade-10'}`}>{round2(s.grade10)}</span></td>
+                          <td style={{ textAlign: 'center' }}><strong>{s.grade4}</strong></td>
+                          <td style={{ textAlign: 'center' }}><span className={`badge badge-letter-${s.letter.charAt(0)}`}>{s.letter}</span></td>
+                          <td style={{ textAlign: 'center' }}><span className="badge badge-type">{s.type}</span></td>
+                          <td style={{ textAlign: 'center', padding: '12px 6px' }}>
+                            <button className="btn btn-secondary" style={{ padding: '4px 8px', marginRight: 4 }} title="Sửa/Xem" onClick={() => setEditingSubject(s)}><EditIcon sx={{ fontSize: 16 }} /></button>
+                            <button className="btn btn-danger" style={{ padding: '4px 8px' }} title="Xoá" onClick={() => setSubjectToDelete(s._id)}><DeleteOutlineIcon sx={{ fontSize: 16 }} /></button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile: Cards */}
+              <div className="subject-card-list">
+                {subjects.map((s) => {
+                  const isFail = s.grade10 < 4.0;
+                  return (
+                    <div key={s._id} className="subject-card">
+                      <div className="subject-card-header">
+                        <span className="subject-card-name">{s.name}</span>
+                        <div className="subject-card-actions">
+                          <button className="btn btn-secondary" style={{ padding: '6px 10px' }} onClick={() => setEditingSubject(s)}><EditIcon sx={{ fontSize: 14 }} /></button>
+                          <button className="btn btn-danger" style={{ padding: '6px 10px' }} onClick={() => setSubjectToDelete(s._id)}><DeleteOutlineIcon sx={{ fontSize: 14 }} /></button>
+                        </div>
+                      </div>
+                      <div className="subject-card-grades">
+                        <div className="subject-card-grade"><span className="label">TC</span><span className="value">{s.credits}</span></div>
+                        <div className="subject-card-grade"><span className="label">Điểm 10</span><span className={`value ${isFail ? 'text-red-500' : ''}`}>{round2(s.grade10)}</span></div>
+                        <div className="subject-card-grade"><span className="label">Điểm 4</span><span className="value">{s.grade4}</span></div>
+                        <div className="subject-card-grade"><span className="label">Xếp loại</span><span className="value">{s.letter}</span></div>
+                      </div>
+                      <div className="subject-card-type">
+                        <span className="badge badge-type">{s.type}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       </div>
