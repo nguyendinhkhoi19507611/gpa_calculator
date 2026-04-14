@@ -1,26 +1,316 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #111111;
+  --color-primary-light: #333333;
+  --color-accent: #2563eb;
+  --color-accent-light: #3b82f6;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-border: #e5e7eb;
+  --color-border-dark: #d1d5db;
+  --color-bg: #f9fafb;
+  --color-bg-card: #ffffff;
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ============= Base ============= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ============= Auth Layout ============= */
+.auth-layout {
+  @apply min-h-screen flex items-center justify-center p-6;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+.auth-container { @apply w-full max-w-md; }
+.auth-header { @apply text-center mb-8; }
+.auth-header h1 { @apply text-3xl font-bold text-gray-900 flex items-center justify-center gap-3; }
+.auth-header p { @apply text-gray-500 mt-2 text-sm; }
+.auth-card {
+  @apply bg-white rounded-2xl border border-gray-200 shadow-lg p-8;
+}
+.auth-card h2 { @apply text-xl font-bold text-gray-900 mb-6 text-center; }
+.auth-card .form-group { @apply mb-5; }
+.auth-btn {
+  @apply w-full justify-center mt-2 py-3 text-base;
+}
+.auth-error {
+  @apply bg-red-50 text-red-600 border border-red-200 rounded-lg px-4 py-3 text-sm mb-4;
+}
+.field-error { @apply text-xs text-red-500 mt-1; }
+.auth-link { @apply text-center mt-5 text-sm text-gray-500; }
+.auth-link a { @apply text-gray-900 font-semibold no-underline hover:underline; }
+
+/* ============= Dashboard Layout ============= */
+.dashboard-layout { @apply min-h-screen flex flex-col; }
+.dashboard-body { @apply flex flex-1; padding-top: 60px; }
+.dashboard-main { @apply flex-1; margin-left: 280px; min-height: calc(100vh - 60px); }
+
+/* ============= Header ============= */
+.app-header {
+  @apply fixed top-0 left-0 right-0 z-50 h-[60px] bg-white border-b border-gray-200 flex items-center justify-between px-6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.header-left { @apply flex items-center gap-3; }
+.header-title { @apply text-lg font-bold text-gray-900 flex items-center gap-2; }
+.header-right { @apply flex items-center gap-4; }
+.header-user { @apply flex items-center gap-2; }
+.user-avatar {
+  @apply w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold;
+}
+.user-name { @apply text-sm text-gray-700 font-medium; }
+.header-logout { @apply text-xs px-3 py-1.5; }
+.hamburger-btn {
+  @apply hidden flex-col gap-1 bg-transparent border-none cursor-pointer p-1;
+}
+.hamburger-btn span { @apply block w-5 h-0.5 bg-gray-700 rounded-sm transition-all; }
+
+/* ============= Sidebar ============= */
+.sidebar {
+  @apply fixed top-[60px] left-0 bottom-0 w-[280px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-[48];
+}
+.sidebar-header { @apply px-5 pt-5 pb-3 flex items-center justify-between; }
+.sidebar-header h2 { @apply text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2; }
+.sidebar-close { @apply hidden bg-transparent border-none text-xl text-gray-400 cursor-pointer; }
+.sidebar-gpa-mini {
+  @apply mx-4 p-4 bg-gray-900 rounded-xl;
+}
+.sidebar-gpa-row {
+  @apply flex justify-between items-center py-1 text-xs;
+}
+.sidebar-gpa-row span { @apply text-gray-400; }
+.sidebar-gpa-row strong { @apply text-white text-sm; }
+.sidebar-nav { @apply flex-1 p-3 flex flex-col gap-1; }
+.sidebar-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg border-none bg-transparent cursor-pointer text-left w-full text-gray-600 text-sm transition-all;
+}
+.sidebar-item:hover { @apply bg-gray-50; }
+.sidebar-item.active { @apply bg-gray-900 text-white; }
+.sidebar-item-icon { @apply text-base flex-shrink-0 flex items-center; }
+.sidebar-item-content { @apply flex flex-col min-w-0; }
+.sidebar-item-name { @apply font-semibold whitespace-nowrap overflow-hidden text-ellipsis; }
+.sidebar-item-gpa { @apply text-xs opacity-70; }
+.sidebar-add-btn { @apply mx-4 mb-4 text-center justify-center; }
+.sidebar-overlay {
+  @apply hidden fixed inset-0 z-[45] bg-black/40;
+}
+
+/* ============= Modal ============= */
+.modal-overlay {
+  @apply fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4;
+}
+.modal-content {
+  @apply bg-white rounded-2xl shadow-2xl w-full max-w-md p-6;
+}
+.modal-header { @apply flex items-center justify-between mb-5; }
+.modal-header h3 { @apply text-lg font-bold text-gray-900 flex items-center gap-2; }
+.modal-close { @apply bg-transparent border-none text-xl text-gray-400 cursor-pointer hover:text-gray-700; }
+
+/* ============= Container & Card ============= */
+.container { @apply max-w-4xl mx-auto px-5 py-8; }
+.card {
+  @apply bg-white rounded-2xl border border-gray-200 shadow-sm mb-6 overflow-hidden;
+}
+.card-header {
+  @apply bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3;
+}
+.card-header .icon {
+  @apply w-9 h-9 rounded-xl bg-gray-900 text-white flex items-center justify-center text-base flex-shrink-0;
+}
+.card-header h2 { @apply text-sm font-bold text-gray-900 uppercase tracking-wide; }
+.card-body { @apply p-6; }
+
+/* ============= Tabs ============= */
+.tabs { @apply flex gap-2 mb-5 flex-wrap; }
+.tab-btn {
+  @apply px-5 py-2 rounded-full border border-gray-200 bg-white text-gray-500 text-sm cursor-pointer transition-all font-medium;
+}
+.tab-btn:hover { @apply border-gray-400 text-gray-700; }
+.tab-btn.active { @apply bg-gray-900 border-gray-900 text-white; }
+
+.tab-panel { @apply hidden; }
+.tab-panel.active { @apply block; }
+
+/* ============= Form ============= */
+.form-grid { @apply grid grid-cols-2 gap-4; }
+.form-grid.three { @apply grid-cols-[2fr_1fr_1fr]; }
+.form-full { @apply col-span-full; }
+.form-group { @apply flex flex-col gap-1.5; }
+.form-group label {
+  @apply text-xs font-semibold text-gray-500 uppercase tracking-wider;
+}
+
+input[type="text"], input[type="number"], input[type="email"], input[type="password"], select {
+  @apply h-10 px-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm outline-none transition-all font-[inherit];
+}
+input:focus, select:focus {
+  @apply border-gray-900 bg-white ring-2 ring-gray-900/10;
+}
+input::placeholder { @apply text-gray-400; }
+
+/* ============= Grades ============= */
+.grades-group { @apply mb-4; }
+.grades-group .grades-label {
+  @apply text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center justify-between;
+}
+.grades-row { @apply flex gap-2 items-center flex-wrap; }
+.grade-input-wrap { @apply flex flex-col items-center gap-1; }
+.grade-input-wrap span { @apply text-[11px] text-gray-400; }
+.grade-input-wrap input { @apply w-[70px] text-center; }
+
+.add-grade-btn, .remove-grade-btn {
+  @apply w-8 h-8 rounded-full border border-gray-200 cursor-pointer text-lg leading-none font-semibold flex items-center justify-center transition-all bg-white text-gray-500 flex-shrink-0 mt-[18px];
+}
+.add-grade-btn { @apply bg-gray-900 border-gray-900 text-white text-xl; }
+.add-grade-btn:hover { @apply bg-gray-700; }
+.remove-grade-btn:hover { @apply border-red-400 text-red-500 bg-red-50; }
+
+/* ============= Practice Toggle ============= */
+.practice-toggle {
+  @apply flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer select-none mb-4;
+}
+.practice-toggle input[type="checkbox"] {
+  @apply w-4 h-4 accent-gray-900 cursor-pointer flex-shrink-0;
+}
+.practice-toggle span { @apply text-sm text-gray-600 font-medium; }
+
+.practice-section {
+  @apply bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 mb-4;
+}
+.practice-section-title {
+  @apply text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-2;
+}
+.practice-section-title::before {
+  content: ''; @apply block w-[3px] h-3.5 bg-gray-900 rounded-sm;
+}
+
+/* ============= Buttons ============= */
+.btn {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border-none text-sm font-semibold cursor-pointer transition-all font-[inherit];
+}
+.btn:disabled { @apply opacity-50 cursor-not-allowed; }
+.btn-primary {
+  @apply bg-gray-900 text-white;
+}
+.btn-primary:hover:not(:disabled) { @apply bg-gray-700 shadow-lg shadow-gray-900/20 -translate-y-px; }
+.btn-primary:active { @apply translate-y-0; }
+.btn-danger { @apply bg-red-50 text-red-500 border border-red-200 text-xs px-3 py-1.5; }
+.btn-danger:hover { @apply bg-red-500 text-white; }
+.btn-secondary { @apply bg-gray-100 text-gray-600 border border-gray-200; }
+.btn-secondary:hover { @apply bg-gray-200 text-gray-900; }
+.btn-row { @apply flex gap-3 justify-end mt-5 items-center; }
+.error-msg { @apply text-xs text-red-500 -mt-1 hidden; }
+.error-msg.show { @apply block; }
+
+/* ============= Table ============= */
+.subjects-table { @apply w-full border-collapse text-sm; }
+.subjects-table th {
+  @apply bg-gray-900 text-white px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider;
+}
+.subjects-table th:first-child { @apply rounded-tl-lg; }
+.subjects-table th:last-child { @apply rounded-tr-lg text-center; }
+.subjects-table td { @apply px-4 py-3 border-b border-gray-100 align-middle; }
+.subjects-table tr:last-child td { @apply border-b-0; }
+.subjects-table tr:hover td { @apply bg-gray-50; }
+.subjects-table td:last-child { @apply text-center; }
+
+/* ============= Badges ============= */
+.badge { @apply inline-block px-3 py-0.5 rounded-full text-xs font-semibold; }
+.badge-grade-10 { @apply bg-blue-50 text-blue-600 border border-blue-200; }
+.badge-grade-4 { @apply bg-green-50 text-green-600 border border-green-200; }
+.badge-fail { @apply bg-red-50 text-red-500 border border-red-200; }
+.badge-type { @apply bg-gray-100 text-gray-500 border border-gray-200 text-[11px]; }
+
+/* ============= Empty State ============= */
+.empty-state { @apply text-center py-12 px-4 text-gray-400; }
+.empty-state .empty-icon { @apply text-5xl mb-4 flex justify-center; }
+.empty-state p { @apply text-sm; }
+
+/* ============= GPA Summary ============= */
+.gpa-summary {
+  @apply bg-gray-900 rounded-2xl p-7 grid grid-cols-3 gap-4 mb-6 relative overflow-hidden;
+}
+.gpa-summary::before {
+  content: ''; @apply absolute inset-0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 70%);
+}
+.gpa-item { @apply text-center relative; }
+.gpa-item:not(:last-child)::after {
+  content: ''; @apply absolute right-0 top-[10%] h-[80%] w-px bg-white/10;
+}
+.gpa-label { @apply text-[11px] text-gray-400 uppercase tracking-wider mb-1.5; }
+.gpa-value { @apply text-3xl font-bold text-white leading-none; }
+.gpa-value.large { @apply text-4xl; }
+.gpa-sub { @apply text-xs text-gray-400 mt-1; }
+
+/* ============= Grade Scale ============= */
+.grade-scale-card { @apply bg-gray-50 border border-gray-200 rounded-lg overflow-hidden; }
+.grade-scale-row {
+  @apply flex justify-between items-center px-4 py-2 border-b border-gray-200 text-sm;
+}
+.grade-scale-row:last-child { @apply border-b-0; }
+.grade-scale-row:nth-child(odd) { @apply bg-white; }
+.grade-scale-row .g10 { @apply text-gray-500 font-medium; }
+.grade-scale-row .g4 { @apply font-bold text-gray-900; }
+.grade-scale-row .letter { @apply text-gray-400 text-xs; }
+
+/* ============= Info Box ============= */
+.info-box {
+  @apply bg-gray-50 border-l-3 border-l-gray-300 rounded-r-lg px-4 py-3 mb-4 text-sm text-gray-500 leading-relaxed;
+}
+.info-box strong { @apply text-gray-700; }
+
+.section-title {
+  @apply text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2;
+}
+.section-title::after { content: ''; @apply flex-1 h-px bg-gray-200; }
+
+/* ============= Semester Overview ============= */
+.semesters-overview { @apply grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 mb-6; }
+.semester-overview-card {
+  @apply bg-white border border-gray-200 rounded-2xl p-5 cursor-pointer transition-all shadow-sm;
+}
+.semester-overview-card:hover { @apply -translate-y-0.5 shadow-md border-gray-300; }
+.semester-overview-header { @apply flex justify-between items-start mb-4; }
+.semester-overview-header h3 { @apply text-sm font-bold text-gray-900 flex items-center gap-2; }
+.semester-overview-count { @apply text-[11px] text-gray-400 whitespace-nowrap; }
+.semester-overview-grades { @apply grid grid-cols-2 gap-3; }
+.semester-overview-grade { @apply bg-gray-50 rounded-lg px-3 py-3 text-center; }
+.semester-overview-grade .grade-label {
+  @apply block text-[10px] uppercase tracking-wider text-gray-400 mb-1;
+}
+.semester-overview-grade .grade-value { @apply text-xl font-bold text-gray-900; }
+
+.semester-gpa { @apply grid-cols-4; }
+
+/* ============= Responsive ============= */
+@media (max-width: 768px) {
+  .sidebar { @apply -translate-x-full transition-transform duration-300; }
+  .sidebar.open { @apply translate-x-0; }
+  .sidebar-overlay.show { @apply block; }
+  .sidebar-close { @apply block; }
+  .dashboard-main { @apply ml-0; }
+  .hamburger-btn { @apply flex; }
+  .user-name { @apply hidden; }
+  .form-grid { @apply grid-cols-1; }
+  .form-grid.three { @apply grid-cols-2; }
+  .gpa-summary { @apply grid-cols-1 gap-3; }
+  .semester-gpa { @apply grid-cols-2; }
+  .gpa-item:not(:last-child)::after { @apply hidden; }
+  .semesters-overview { @apply grid-cols-1; }
+}
+
+@media (max-width: 480px) {
+  .form-grid.three { @apply grid-cols-1; }
+  .semester-gpa { @apply grid-cols-1; }
 }
