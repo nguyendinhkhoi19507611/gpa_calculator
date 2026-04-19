@@ -289,13 +289,14 @@ input::placeholder { @apply text-gray-400; }
 /* ============= Grade Scale ============= */
 .grade-scale-card { @apply bg-gray-50 border border-gray-200 rounded-lg overflow-hidden; }
 .grade-scale-row {
-  @apply flex justify-between items-center px-4 py-2 border-b border-gray-200 text-sm;
+  @apply grid items-center px-4 py-2 border-b border-gray-200 text-sm;
+  grid-template-columns: 1fr auto 1fr;
 }
 .grade-scale-row:last-child { @apply border-b-0; }
 .grade-scale-row:nth-child(odd) { @apply bg-white; }
 .grade-scale-row .g10 { @apply text-gray-500 font-medium; }
-.grade-scale-row .g4 { @apply font-bold text-gray-900; }
-.grade-scale-row .letter { @apply text-gray-400 text-xs; }
+.grade-scale-row .g4 { @apply font-bold text-gray-900 text-right; }
+.grade-scale-row .letter { @apply text-gray-400 text-xs text-center; }
 
 /* ============= Info Box ============= */
 .info-box {

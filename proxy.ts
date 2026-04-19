@@ -23,6 +23,9 @@ export default async function proxy(request: NextRequest) {
   if (pathname.startsWith('/api') || 
       pathname.startsWith('/_next') || 
       pathname.startsWith('/favicon') ||
+      pathname === '/manifest.webmanifest' ||
+      pathname === '/robots.txt' ||
+      pathname === '/sitemap.xml' ||
       pathname.endsWith('.png') ||
       pathname.endsWith('.jpg') ||
       pathname.endsWith('.jpeg') ||
