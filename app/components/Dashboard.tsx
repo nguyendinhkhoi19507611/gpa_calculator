@@ -14,6 +14,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import ConfirmModal from './ConfirmModal';
+import GpaPredictorCard from './GpaPredictorCard';
 import toast from 'react-hot-toast';
 
 export interface SubjectData {
@@ -75,8 +76,8 @@ export default function Dashboard() {
         sum4 += semSum4;
       }
     });
-    if (sumC === 0) return { g10: '—', g4: '—', totalC: 0 };
-    return { g10: round2(sum10 / sumC), g4: round2(sum4 / sumC), totalC: sumC };
+    if (sumC === 0) return { g10: '—', g4: '—', totalC: 0, rawSum4: 0, rawSum10: 0 };
+    return { g10: round2(sum10 / sumC), g4: round2(sum4 / sumC), totalC: sumC, rawSum4: sum4, rawSum10: sum10 };
   };
 
   const calcOverallGpa = useCallback(() => {
@@ -460,6 +461,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+        <GpaPredictorCard currentGpa4={overallGpa.g4} currentGpa10={overallGpa.g10} totalCredits={overallGpa.totalC} rawSum4={overallGpa.rawSum4} rawSum10={overallGpa.rawSum10} />
         <GradeScaleCard />
       </>
     );

@@ -75,15 +75,13 @@ body {
 
 /* ============= Dashboard Layout ============= */
 .dashboard-layout { @apply min-h-screen flex flex-col; min-height: 100dvh; }
-.dashboard-body { @apply flex flex-1; padding-top: 60px; }
-.dashboard-main { @apply flex-1; margin-left: 280px; min-height: calc(100vh - 60px); min-height: calc(100dvh - 60px); }
+.dashboard-body { @apply flex flex-1; padding-top: 56px; }
+.dashboard-main { @apply flex-1; margin-left: 240px; min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px); }
 
 /* ============= Header ============= */
 .app-header {
-  @apply fixed top-0 left-0 right-0 z-50 h-[60px] bg-white border-b border-gray-200 flex items-center justify-between px-6;
+  @apply fixed top-0 left-0 right-0 z-50 h-[56px] bg-white border-b border-gray-200 flex items-center justify-between px-5;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  padding-left: max(env(safe-area-inset-left), 1.5rem);
-  padding-right: max(env(safe-area-inset-right), 1.5rem);
 }
 .header-left { @apply flex items-center gap-3; }
 .header-title { @apply text-lg font-bold text-gray-900 flex items-center gap-2; }
@@ -101,7 +99,7 @@ body {
 
 /* ============= Sidebar ============= */
 .sidebar {
-  @apply fixed top-[60px] left-0 bottom-0 w-[280px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-[48];
+  @apply fixed top-[56px] left-0 bottom-0 w-[240px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-[48];
   -webkit-overflow-scrolling: touch;
 }
 .sidebar-header { @apply px-5 pt-5 pb-3 flex items-center justify-between; }
@@ -149,7 +147,7 @@ body {
 @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ============= Container & Card ============= */
-.container { @apply max-w-4xl mx-auto px-5 py-8; }
+.container { @apply mx-auto px-4 py-6; max-width: 100%; }
 .card {
   @apply bg-white rounded-2xl border border-gray-200 shadow-sm mb-6 overflow-hidden;
 }
@@ -160,7 +158,7 @@ body {
   @apply w-9 h-9 rounded-xl bg-gray-900 text-white flex items-center justify-center text-base flex-shrink-0;
 }
 .card-header h2 { @apply text-sm font-bold text-gray-900 uppercase tracking-wide; }
-.card-body { @apply p-6; }
+.card-body { @apply p-5; }
 
 /* ============= Tabs ============= */
 .tabs { @apply flex gap-2 mb-5 flex-wrap; }
