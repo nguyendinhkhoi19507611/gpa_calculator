@@ -14,6 +14,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import ConfirmModal from './ConfirmModal';
+import GpaPredictorCard from './GpaPredictorCard';
 import toast from 'react-hot-toast';
 
 export interface SubjectData {
@@ -34,15 +35,15 @@ export interface YearData {
 export default function Dashboard() {
   const [userName, setUserName] = useState('');
   const [years, setYears] = useState<YearData[]>([]);
-  
+
   const [activeView, setActiveView] = useState<{ type: 'overview' | 'year' | 'semester', id: string | null }>({ type: 'overview', id: null });
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+
   const [showAddSemesterModal, setShowAddSemesterModal] = useState(false);
   const [showAddYearModal, setShowAddYearModal] = useState(false);
   const [preselectedYearId, setPreselectedYearId] = useState<string | null>(null);
-  const [confirmConfig, setConfirmConfig] = useState<{isOpen: boolean, title: string, message: string, onConfirm: () => void, confirmText: string} | null>(null);
-  
+  const [confirmConfig, setConfirmConfig] = useState<{ isOpen: boolean, title: string, message: string, onConfirm: () => void, confirmText: string } | null>(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -98,10 +99,10 @@ export default function Dashboard() {
 
   const addSemester = async (yearId: string, name: string, targetCredits: number) => {
     try {
-      const res = await fetch('/api/semesters', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ yearId, name, targetCredits }) 
+      const res = await fetch('/api/semesters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ yearId, name, targetCredits })
       });
       const data = await res.json();
       if (res.ok && data.semester) {
@@ -164,23 +165,23 @@ export default function Dashboard() {
   };
 
   const onSubjectAdded = (yearId: string, semId: string, subject: SubjectData) => {
-    setYears(prev => prev.map(y => y._id === yearId ? { 
-      ...y, 
-      semesters: y.semesters.map(s => s._id === semId ? { ...s, subjects: [...s.subjects, subject] } : s) 
+    setYears(prev => prev.map(y => y._id === yearId ? {
+      ...y,
+      semesters: y.semesters.map(s => s._id === semId ? { ...s, subjects: [...s.subjects, subject] } : s)
     } : y));
   };
 
   const onSubjectDeleted = (yearId: string, semId: string, subjectId: string) => {
-    setYears(prev => prev.map(y => y._id === yearId ? { 
-      ...y, 
-      semesters: y.semesters.map(s => s._id === semId ? { ...s, subjects: s.subjects.filter(sub => sub._id !== subjectId) } : s) 
+    setYears(prev => prev.map(y => y._id === yearId ? {
+      ...y,
+      semesters: y.semesters.map(s => s._id === semId ? { ...s, subjects: s.subjects.filter(sub => sub._id !== subjectId) } : s)
     } : y));
   };
 
   const onSubjectUpdated = (yearId: string, semId: string, subjectId: string, updatedSubject: SubjectData) => {
-    setYears(prev => prev.map(y => y._id === yearId ? { 
-      ...y, 
-      semesters: y.semesters.map(s => s._id === semId ? { ...s, subjects: s.subjects.map(sub => sub._id === subjectId ? updatedSubject : sub) } : s) 
+    setYears(prev => prev.map(y => y._id === yearId ? {
+      ...y,
+      semesters: y.semesters.map(s => s._id === semId ? { ...s, subjects: s.subjects.map(sub => sub._id === subjectId ? updatedSubject : sub) } : s)
     } : y));
   };
 
@@ -188,7 +189,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="dashboard-layout">
-        <Header userName="..." onToggleSidebar={() => {}} />
+        <Header userName="..." onToggleSidebar={() => { }} />
         <div className="dashboard-body"><div className="dashboard-main"><div className="container">
           <div className="empty-state">
             <div className="empty-icon"><HourglassEmptyIcon sx={{ fontSize: 48, color: '#d1d5db' }} /></div>
@@ -205,7 +206,7 @@ export default function Dashboard() {
     if (activeView.type === 'semester' && activeView.id) {
       const foundSem = years.flatMap(y => y.semesters).find(s => s._id === activeView.id) || null;
       const parentYear = years.find(y => y.semesters.some(s => s._id === activeView.id)) || null;
-      
+
       if (foundSem && parentYear) {
         return (
           <SemesterCard key={foundSem._id} semesterId={foundSem._id}
@@ -222,10 +223,10 @@ export default function Dashboard() {
       const year = years.find(y => y._id === activeView.id);
       if (year) {
         const yearGpa = calculateGpaFromSemesters(year.semesters);
-        
+
         let formula10 = '';
         let formula4 = '';
-        
+
         const validSemesters = year.semesters.filter(sem => {
           let semSumC = 0;
           sem.subjects.forEach(s => semSumC += s.credits);
@@ -235,14 +236,14 @@ export default function Dashboard() {
         if (validSemesters.length > 0) {
           const parts10: string[] = [];
           const parts4: string[] = [];
-          
+
           validSemesters.forEach(sem => {
             sem.subjects.forEach(s => {
               parts10.push(`${round2(s.grade10)}×${s.credits}`);
               parts4.push(`${s.grade4}×${s.credits}`);
             });
           });
-          
+
           if (parts10.length > 0) {
             formula10 = `(${parts10.join(' + ')}) ÷ ${yearGpa.totalC} = <strong>${yearGpa.g10}</strong>`;
             formula4 = `(${parts4.join(' + ')}) ÷ ${yearGpa.totalC} = <strong>${yearGpa.g4}</strong>`;
@@ -250,88 +251,88 @@ export default function Dashboard() {
         }
 
         return (
-           <>
-              <div className="gpa-summary">
-                <div className="gpa-item">
-                  <div className="gpa-label">Năm học</div>
-                  <div className="gpa-value" style={{ fontSize: '1.25rem' }}>{year.name}</div>
-                </div>
-                <div className="gpa-item">
-                  <div className="gpa-label">Số Học kỳ</div>
-                  <div className="gpa-value large">{year.semesters.length}</div>
-                </div>
-                <div className="gpa-item">
-                  <div className="gpa-label">GPA (Hệ 10)</div>
-                  <div className="gpa-value large">{yearGpa.g10}</div>
-                </div>
-                <div className="gpa-item">
-                  <div className="gpa-label">GPA (Hệ 4)</div>
-                  <div className="gpa-value large">{yearGpa.g4}</div>
-                </div>
+          <>
+            <div className="gpa-summary">
+              <div className="gpa-item">
+                <div className="gpa-label">Năm học</div>
+                <div className="gpa-value" style={{ fontSize: '1.25rem' }}>{year.name}</div>
               </div>
+              <div className="gpa-item">
+                <div className="gpa-label">Số Học kỳ</div>
+                <div className="gpa-value large">{year.semesters.length}</div>
+              </div>
+              <div className="gpa-item">
+                <div className="gpa-label">GPA (Hệ 10)</div>
+                <div className="gpa-value large">{yearGpa.g10}</div>
+              </div>
+              <div className="gpa-item">
+                <div className="gpa-label">GPA (Hệ 4)</div>
+                <div className="gpa-value large">{yearGpa.g4}</div>
+              </div>
+            </div>
 
-              {formula10 && (
-                <div className="info-box" style={{ marginTop: '1.5rem', marginBottom: '1.5rem', fontSize: '14px' }}>
-                  <div style={{ marginBottom: 6 }}><strong>Chi tiết tính GPA Năm học:</strong></div>
-                  <div style={{ marginBottom: 4 }} dangerouslySetInnerHTML={{ __html: `<strong>Hệ 10:</strong> ${formula10}` }} />
-                  <div dangerouslySetInnerHTML={{ __html: `<strong>Hệ 4:</strong> ${formula4}` }} />
-                  <span className="text-[11.5px] text-gray-500 mt-2 block italic" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '6px' }}>
-                    * Chỉ các Học kỳ đã <strong>hoàn thành đủ số tín chỉ dự kiến</strong> mới được hệ thống tính gộp vào GPA chung.
-                  </span>
-                </div>
-              )}
+            {formula10 && (
+              <div className="info-box" style={{ marginTop: '1.5rem', marginBottom: '1.5rem', fontSize: '14px' }}>
+                <div style={{ marginBottom: 6 }}><strong>Chi tiết tính GPA Năm học:</strong></div>
+                <div style={{ marginBottom: 4 }} dangerouslySetInnerHTML={{ __html: `<strong>Hệ 10:</strong> ${formula10}` }} />
+                <div dangerouslySetInnerHTML={{ __html: `<strong>Hệ 4:</strong> ${formula4}` }} />
+                <span className="text-[11.5px] text-gray-500 mt-2 block italic" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '6px' }}>
+                  * Chỉ các Học kỳ đã <strong>hoàn thành đủ số tín chỉ dự kiến</strong> mới được hệ thống tính gộp vào GPA chung.
+                </span>
+              </div>
+            )}
 
-              {year.semesters.length === 0 ? (
-                <div className="card"><div className="card-body">
-                  <div className="empty-state">
-                    <div className="empty-icon"><SchoolIcon sx={{ fontSize: 48, color: '#d1d5db' }} /></div>
-                    <p>Chưa có học kỳ nào trong năm này.</p>
-                    <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setPreselectedYearId(year._id); setShowAddSemesterModal(true); }}>
-                      <AddIcon sx={{ fontSize: 16 }} /> Tạo học kỳ
-                    </button>
-                  </div>
-                </div></div>
-              ) : (
-                <div className="semesters-overview">
-                  {year.semesters.map((sem) => {
-                    let semSumC = 0, semSum10 = 0, semSum4 = 0;
-                    sem.subjects.forEach(s => { semSumC += s.credits; semSum10 += s.grade10 * s.credits; semSum4 += s.grade4 * s.credits; });
-                    const isComplete = semSumC === sem.targetCredits && sem.targetCredits > 0;
-                    const g10 = isComplete ? round2(semSum10 / semSumC) : '—';
-                    const g4 = isComplete ? round2(semSum4 / semSumC) : '—';
-                    
-                    return (
-                      <div className="semester-overview-card" key={sem._id} onClick={() => setActiveView({ type: 'semester', id: sem._id })}>
-                        <div className="semester-overview-header">
-                          <h3><MenuBookIcon sx={{ fontSize: 16 }} /> {sem.name}</h3>
-                          <span className="semester-overview-count">{sem.subjects.length} môn • {semSumC}/{sem.targetCredits} TC</span>
-                        </div>
-                        <div className="semester-overview-grades">
-                          <div className="semester-overview-grade"><span className="grade-label">Hệ 10</span><span className="grade-value">{g10}</span></div>
-                          <div className="semester-overview-grade"><span className="grade-label">Hệ 4</span><span className="grade-value">{g4}</span></div>
-                        </div>
-                        {!isComplete && (
-                          <div className="text-[10px] text-orange-600 mt-3 font-semibold bg-orange-50 p-1.5 rounded text-center">
-                            ⚠️ Tín chỉ không khớp ({semSumC}/{sem.targetCredits})
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              <div className="year-actions">
-                <button className="btn btn-primary" onClick={() => { setPreselectedYearId(year._id); setShowAddSemesterModal(true); }}>
-                  <AddIcon sx={{ fontSize: 18 }} /> Thêm học kỳ mới
-                </button>
-                {years.length > 0 && (
-                  <button className="btn btn-danger" onClick={() => confirmDeleteYear(year._id)}>
-                    <DeleteOutlineIcon sx={{ fontSize: 18 }} /> Xóa toàn bộ năm học này
+            {year.semesters.length === 0 ? (
+              <div className="card"><div className="card-body">
+                <div className="empty-state">
+                  <div className="empty-icon"><SchoolIcon sx={{ fontSize: 48, color: '#d1d5db' }} /></div>
+                  <p>Chưa có học kỳ nào trong năm này.</p>
+                  <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setPreselectedYearId(year._id); setShowAddSemesterModal(true); }}>
+                    <AddIcon sx={{ fontSize: 16 }} /> Tạo học kỳ
                   </button>
-                )}
+                </div>
+              </div></div>
+            ) : (
+              <div className="semesters-overview">
+                {year.semesters.map((sem) => {
+                  let semSumC = 0, semSum10 = 0, semSum4 = 0;
+                  sem.subjects.forEach(s => { semSumC += s.credits; semSum10 += s.grade10 * s.credits; semSum4 += s.grade4 * s.credits; });
+                  const isComplete = semSumC === sem.targetCredits && sem.targetCredits > 0;
+                  const g10 = isComplete ? round2(semSum10 / semSumC) : '—';
+                  const g4 = isComplete ? round2(semSum4 / semSumC) : '—';
+
+                  return (
+                    <div className="semester-overview-card" key={sem._id} onClick={() => setActiveView({ type: 'semester', id: sem._id })}>
+                      <div className="semester-overview-header">
+                        <h3><MenuBookIcon sx={{ fontSize: 16 }} /> {sem.name}</h3>
+                        <span className="semester-overview-count">{sem.subjects.length} môn • {semSumC}/{sem.targetCredits} TC</span>
+                      </div>
+                      <div className="semester-overview-grades">
+                        <div className="semester-overview-grade"><span className="grade-label">Hệ 10</span><span className="grade-value">{g10}</span></div>
+                        <div className="semester-overview-grade"><span className="grade-label">Hệ 4</span><span className="grade-value">{g4}</span></div>
+                      </div>
+                      {!isComplete && (
+                        <div className="text-[10px] text-orange-600 mt-3 font-semibold bg-orange-50 p-1.5 rounded text-center">
+                          ⚠️ Tín chỉ không khớp ({semSumC}/{sem.targetCredits})
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-           </>
+            )}
+
+            <div className="year-actions">
+              <button className="btn btn-primary" onClick={() => { setPreselectedYearId(year._id); setShowAddSemesterModal(true); }}>
+                <AddIcon sx={{ fontSize: 18 }} /> Thêm học kỳ mới
+              </button>
+              {years.length > 0 && (
+                <button className="btn btn-danger" onClick={() => confirmDeleteYear(year._id)}>
+                  <DeleteOutlineIcon sx={{ fontSize: 18 }} /> Xóa toàn bộ năm học này
+                </button>
+              )}
+            </div>
+          </>
         );
       }
     }
@@ -339,7 +340,7 @@ export default function Dashboard() {
     // Default Overview
     let overallFormula10 = '';
     let overallFormula4 = '';
-    
+
     const allSemesters = years.flatMap(y => y.semesters);
     const validSemesters = allSemesters.filter(sem => {
       let semSumC = 0;
@@ -350,14 +351,14 @@ export default function Dashboard() {
     if (validSemesters.length > 0) {
       const parts10: string[] = [];
       const parts4: string[] = [];
-      
+
       validSemesters.forEach(sem => {
         sem.subjects.forEach(s => {
           parts10.push(`${round2(s.grade10)}×${s.credits}`);
           parts4.push(`${s.grade4}×${s.credits}`);
         });
       });
-      
+
       if (parts10.length > 0) {
         overallFormula10 = `(${parts10.join(' + ')}) ÷ ${overallGpa.totalC} = <strong>${overallGpa.g10}</strong>`;
         overallFormula4 = `(${parts4.join(' + ')}) ÷ ${overallGpa.totalC} = <strong>${overallGpa.g4}</strong>`;
@@ -460,6 +461,11 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+        <GpaPredictorCard
+          currentGpa4={overallGpa.g4}
+          currentGpa10={overallGpa.g10}
+          totalCredits={overallGpa.totalC}
+        />
         <GradeScaleCard />
       </>
     );
@@ -481,7 +487,7 @@ export default function Dashboard() {
         </main>
       </div>
       <AddYearModal isOpen={showAddYearModal} onClose={() => setShowAddYearModal(false)} onAdd={addYear} />
-      <AddSemesterModal isOpen={showAddSemesterModal} onClose={() => setShowAddSemesterModal(false)} 
+      <AddSemesterModal isOpen={showAddSemesterModal} onClose={() => setShowAddSemesterModal(false)}
         years={years} onAdd={addSemester} preselectedYearId={preselectedYearId} />
       {confirmConfig && (
         <ConfirmModal
